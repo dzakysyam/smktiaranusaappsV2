@@ -15,3 +15,21 @@
 **/vendor/
 **/node_modules/
 **/.next/
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Database backups and dumps
+*.sql
+!**/prisma/migrations/**/*.sql
+*.bak
+*.dump
+
+# Generated files
+*.tsbuildinfo
+node_modules/
+vendor/
+
+humanis-insight/assets/img/profiles/
