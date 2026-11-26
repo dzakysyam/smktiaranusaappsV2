@@ -1,3 +1,4 @@
+
 # Aplikasi Bidang SMK Tiara Nusa One
 
 Repository ini digunakan untuk pengembangan dan pemeliharaan aplikasi bidang SMK Tiara Nusa. Setiap aplikasi dikembangkan sesuai kebutuhan unit kerja, dengan rencana integrasi autentikasi terpusat melalui Humanis Insight.
@@ -10,9 +11,9 @@ Aplikasi Epoint, Presta, Riasec, SPMB, dan Eraport belum dimasukkan ke branch in
 
 Humanis Insight versi PHP tetap menjadi referensi sistem sebelumnya. Pengembangan SSO dan RBAC yang baru dilakukan melalui repository terpisah:
 
-[Humanis Insight 2026–2027](https://github.com/dzakysyam/Humanis-Insight-2026-2027)
+[Humanis Insight 2026-2027](https://github.com/dzakysyam/Humanis-Insight-2026-2027)
 
-## SENTRA — Sistem Tata Usaha
+## SENTRA (Sistem Tata Usaha)
 
 SENTRA dikembangkan untuk mendukung proses administrasi Tata Usaha SMK Tiara Nusa.
 
