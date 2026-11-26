@@ -1,0 +1,17 @@
+# Local secrets and operational data: never publish from legacy clone
+**/.env
+**/.env.*
+**/token.json
+**/credentials.json
+**/*.sql
+!sentra-tu/prisma/migrations/**/migration.sql
+**/*.sqlite
+**/*.db
+**/*.pem
+**/*.key
+**/uploads/
+**/upload/
+**/storage/
+**/vendor/
+**/node_modules/
+**/.next/

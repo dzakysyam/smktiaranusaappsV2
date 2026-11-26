@@ -1,0 +1,2 @@
+import { NextRequest } from "next/server";import { store } from "@/lib/prisma-store";import { actor,guard } from "@/lib/request";import { DomainError } from "@/lib/workflow";
+export async function GET(req:NextRequest,context:{params:Promise<{id:string}>}){return guard(req,async()=>{actor(req);const {id}=await context.params;const x=await store.getLetter(id);if(!x)throw new DomainError(404,"Surat tidak ditemukan");return {letter:x,history:await store.history(id)};});}

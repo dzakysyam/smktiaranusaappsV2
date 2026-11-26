@@ -1,0 +1,1 @@
+import Link from "next/link";export default function Home(){return <><h1>SENTRA</h1><p>Tata Usaha SMK Tiara Nusa One</p><p>Surat keluar dan laporan TU dengan status, riwayat, dan review berversi.</p><Link className="button" href="/surat">Masuk ke surat keluar</Link></>}

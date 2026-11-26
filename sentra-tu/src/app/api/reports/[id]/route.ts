@@ -1,0 +1,2 @@
+import { NextRequest } from "next/server";import { store } from "@/lib/prisma-store";import { actor,guard } from "@/lib/request";import { DomainError } from "@/lib/workflow";
+export async function GET(req:NextRequest,c:{params:Promise<{id:string}>}){return guard(req,async()=>{actor(req);const id=(await c.params).id,x=await store.getReport(id);if(!x)throw new DomainError(404,"Laporan tidak ditemukan");return {report:x,versions:await store.versions(id)};});}

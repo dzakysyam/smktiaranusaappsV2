@@ -1,0 +1,131 @@
+// DRAF konseptual; basis data TU dan Humanis TERPISAH.
+// Tidak ada password, NISN, dokumen, atau data produksi.
+Table tu_letters {
+  id uuid [pk]
+  direction varchar [not null, note: 'IN/OUT']
+  reference_number varchar [unique]
+  subject varchar [not null]
+  status varchar [not null]
+  created_by_subject varchar [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+Table tu_archives {
+  id uuid [pk]
+  letter_id uuid [not null]
+  evidence_ref varchar [not null, note: 'Opaque internal file reference']
+  retention_class varchar
+  created_at timestamp [not null]
+}
+Table tu_dispositions {
+  id uuid [pk]
+  letter_id uuid [not null]
+  assigned_to_subject varchar [not null]
+  instruction text
+  status varchar [not null]
+  created_at timestamp [not null]
+}
+Table tu_student_refs {
+  id uuid [pk]
+  source_system varchar [not null]
+  source_student_id varchar [not null]
+  indexes { (source_system, source_student_id) [unique] }
+}
+Table tu_charges {
+  id uuid [pk]
+  student_ref_id uuid [not null]
+  category varchar [not null, note: 'SPP/SPMB/ANNUAL']
+  period_start date [not null]
+  period_end date [not null]
+  amount_minor bigint [not null]
+  status varchar [not null]
+}
+Table tu_payments {
+  id uuid [pk]
+  student_ref_id uuid [not null]
+  reported_amount_minor bigint [not null]
+  evidence_ref varchar
+  status varchar [not null, note: 'PENDING/VERIFIED/REJECTED']
+  verified_by_subject varchar
+  verified_at timestamp
+  created_at timestamp [not null]
+}
+Table tu_allocations {
+  id uuid [pk]
+  payment_id uuid [not null]
+  charge_id uuid [not null]
+  amount_minor bigint [not null]
+  indexes { (payment_id, charge_id) [unique] }
+}
+Table tu_reports {
+  id uuid [pk]
+  period_start date [not null]
+  period_end date [not null]
+  status varchar [not null]
+  current_version int [not null]
+  created_at timestamp [not null]
+}
+Table tu_report_versions {
+  report_id uuid [not null]
+  version int [not null]
+  summary_json json [not null, note: 'Agregat aman saja']
+  evidence_ref varchar
+  created_at timestamp [not null]
+  indexes { (report_id, version) [pk] }
+}
+Table tu_decisions {
+  id uuid [pk]
+  report_id uuid [not null]
+  version int [not null]
+  portal_decision_id uuid [not null, unique]
+  status varchar [not null]
+  actor_subject varchar [not null]
+  decided_at timestamp [not null]
+}
+Table tu_outbox {
+  event_id uuid [pk]
+  report_id uuid [not null]
+  version int [not null]
+  state varchar [not null]
+  attempts int [not null]
+  next_attempt_at timestamp
+}
+Table tu_inbox {
+  event_id uuid [pk]
+  received_at timestamp [not null]
+}
+// Tabel berikut berada pada database Humanis, bukan database TU.
+Table portal_report_snapshots {
+  source_system varchar [not null]
+  source_report_id uuid [not null]
+  source_version int [not null]
+  period_start date [not null]
+  period_end date [not null]
+  status varchar [not null]
+  summary_json json [not null]
+  evidence_ref varchar
+  source_updated_at timestamp [not null]
+  sync_status varchar [not null]
+  indexes { (source_system, source_report_id, source_version) [pk] }
+}
+Table portal_reviews {
+  id uuid [pk]
+  source_system varchar [not null]
+  source_report_id uuid [not null]
+  source_version int [not null]
+  action varchar [not null]
+  reviewer_subject varchar [not null]
+  feedback text
+  decided_at timestamp [not null]
+  sync_status varchar [not null]
+}
+Ref: tu_archives.letter_id > tu_letters.id
+Ref: tu_dispositions.letter_id > tu_letters.id
+Ref: tu_charges.student_ref_id > tu_student_refs.id
+Ref: tu_payments.student_ref_id > tu_student_refs.id
+Ref: tu_allocations.payment_id > tu_payments.id
+Ref: tu_allocations.charge_id > tu_charges.id
+Ref: tu_report_versions.report_id > tu_reports.id
+Ref: tu_decisions.report_id > tu_reports.id
+Ref: tu_outbox.report_id > tu_reports.id
+// Tidak buat FK lintas DB; gunakan ID laporan, versi, dan rekonsiliasi API.

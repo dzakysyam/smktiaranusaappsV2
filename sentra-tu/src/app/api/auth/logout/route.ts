@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server";export async function POST(){const x=NextResponse.redirect(new URL("/",process.env.APP_ORIGIN||"http://localhost:3100"));x.cookies.delete("tu_session");return x;}

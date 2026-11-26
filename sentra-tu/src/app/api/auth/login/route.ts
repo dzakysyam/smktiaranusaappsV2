@@ -1,0 +1,4 @@
+import { NextRequest, NextResponse } from "next/server";
+import * as oidc from "openid-client";
+import { oidcConfig, oidcRedirect, safeReturn, seal } from "@/lib/auth";
+export async function GET(req:NextRequest){const cfg=await oidcConfig();const verifier=oidc.randomPKCECodeVerifier();const challenge=await oidc.calculatePKCECodeChallenge(verifier);const state=oidc.randomState();const target=safeReturn(req.nextUrl.searchParams.get("returnTo"));const url=oidc.buildAuthorizationUrl(cfg,{redirect_uri:oidcRedirect(),scope:"openid profile",code_challenge:challenge,code_challenge_method:"S256",state});const response=NextResponse.redirect(url);response.cookies.set("tu_flow",seal({verifier,state,target,expires:Date.now()+300000}),{httpOnly:true,sameSite:"lax",secure:process.env.NODE_ENV==="production",maxAge:300,path:"/api/auth"});return response;}
