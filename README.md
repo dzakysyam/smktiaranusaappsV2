@@ -1,4 +1,3 @@
-
 # Aplikasi Bidang SMK Tiara Nusa One
 
 Repository ini digunakan untuk pengembangan dan pemeliharaan aplikasi bidang SMK Tiara Nusa. Setiap aplikasi dikembangkan sesuai kebutuhan unit kerja, dengan rencana integrasi autentikasi terpusat melalui Humanis Insight.
