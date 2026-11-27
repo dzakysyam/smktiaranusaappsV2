@@ -1,5 +1,10 @@
 # Penyelarasan Scope Humanis Insight
 
+## Arahan terbaru dan konflik terbuka
+Instruksi produk terbaru menegaskan P1 Humanis Insight, P2 Tracer Study sebagai aplikasi bidang tersendiri, P3 SENTRA/TU dengan fokus pertama keuangan siswa. Pemilik proyek boleh mengerjakan irisan TU untuk menyiapkan integrasi, tanpa menaikkan prioritas sekolah. Humanis hanya portal akses, identitas dan hak akses, monitoring metadata laporan, keputusan dan feedback; data operasional, transaksi, arsip, data alumni, dan laporan resmi tetap di aplikasi sumber.
+
+Konflik eksplisit: Proposal Revisi v1.1 mengecualikan pembayaran, sementara instruksi terbaru meminta keuangan siswa di TU. SRS v1.0 mengusulkan pembayaran di platform pusat; instruksi terbaru menetapkan SENTRA sebagai pemilik tagihan dan pembayaran. Rencana Release 2 di bawah menaruh Keuangan Terpadu sebelum Tracer, dan Release 3 menaruh TU setelahnya; keduanya bukan lagi urutan pengerjaan. Dokumen Proposal dan SRS asli tidak ditemukan di kedua working tree, sehingga perbandingan ini bersumber ringkasan repo dan harus divalidasi dengan dokumen asli saat tersedia.
+
 ## Kesimpulan
 
 Dokumen kerja lama yang mengikuti Proposal v1.1 mengeluarkan pembayaran, siswa, dan modul sekolah terpadu dari scope. Catatan sekolah tanggal 7 November 2026 kemudian menempatkan Humanis Insight, Tracer Study, dan laporan keuangan TU sebagai prioritas. Pemilik proyek juga menyatakan role Siswa akan ditambahkan dan sembilan modul terhubung ke dashboard Kepala Sekolah.
@@ -27,14 +32,14 @@ Karena itu, baseline lama sudah tidak cukup untuk development. Permintaan terbar
 - Ringkasan status dari modul yang telah memiliki data dan kontrak integrasi.
 - Pusat laporan dan pengumuman internal sesuai izin.
 
-### Release 2
+### Release 2 (acuan desain lama, bukan urutan pengembangan)
 
-- Keuangan Terpadu, dengan ringkasan pembayaran per siswa dan laporan per bulan atau semester sebagai prioritas.
-- Alumni dan Tracer Study, dengan privasi responden dan definisi persentase yang disepakati.
+- Tracer Study di aplikasi bidang tersendiri, dengan privasi responden dan definisi persentase yang disepakati. Prioritas P2.
+- Ringkasan keuangan siswa berasal dari SENTRA; Humanis tidak menyimpan transaksi. Prioritas P3.
 
-### Release 3
+### Release 3 (acuan desain lama, bukan urutan pengembangan)
 
-- Tata Usaha, Kurikulum, Sarana dan Prasarana, Humas sesuai DESIGN.md.
+- Tata Usaha untuk keuangan siswa dikerjakan pada P3, bukan menunggu modul lain di Release 3; surat masuk, disposisi, arsip menyusul. Kurikulum, Sarana dan Prasarana, serta Humas tetap menunggu scope.
 - Urutan pengerjaan dapat berubah mengikuti prioritas sekolah yang sudah disepakati.
 
 ### Release 4

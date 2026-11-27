@@ -7,6 +7,7 @@ Dokumen ini menjelaskan arah pengembangan website bidang dalam repo `smktiaranus
 Proposal dan SRS asli belum tersedia di workspace. Karena itu, keputusan yang masih memerlukan persetujuan sekolah ditandai secara terbuka. Saat kedua dokumen tersedia, tim perlu mencocokkan isinya dengan PRD ini sebelum menetapkan ruang lingkup akhir.
 
 ## Gambaran produk
+Urutan pengembangan terbaru dari sekolah adalah P1 Humanis Insight, P2 Tracer Study, P3 Tata Usaha dengan fokus awal keuangan siswa. Pemilik proyek mengerjakan irisan TU lebih dulu agar siap terhubung ke Humanis, tetapi ini tidak mengubah prioritas sekolah. Humanis mengelola portal, akses, metadata dan monitoring laporan, keputusan serta feedback; data operasional dan laporan resmi tetap di website bidang. Tracer Study menjadi aplikasi bidang tersendiri di repository ini setelah struktur dan sumber data alumni ditetapkan.
 
 Sekolah sudah memiliki beberapa website untuk pekerjaan bidang yang berbeda. Epoint mengelola poin siswa, Presta mengelola presensi, SPMB menangani pendaftaran, dan aplikasi lain menjalankan tugasnya masing-masing. Website tersebut tetap menjadi tempat petugas bekerja dan menyimpan data operasional bidangnya.
 
@@ -25,8 +26,8 @@ Daftar berikut mengikuti hasil inventaris kode. Fitur yang tercantum sebagai ren
 | Riasec | Asesmen, hasil, dashboard BK, dan data siswa | Tentukan siapa yang boleh melihat hasil asesmen dan apakah akses publik yang ada tetap diperlukan. |
 | SPMB | Pendaftaran, OTP, formulir, unggah berkas, bukti pembayaran, verifikasi admin, dan TPA | Tetapkan hubungan data calon siswa dengan siswa aktif serta pembagian tanggung jawab pembayaran antara SPMB dan Tata Usaha. |
 | Eraport | Nilai, absensi, rapor, cetak, dan data guru serta siswa | Sepakati format rapor, kewenangan akses, dan penggunaan tanda tangan. |
-| Humanis Insight PHP lama | Indikator, laporan kinerja, monitoring, review, ekspor Excel, dan bukti melalui Google Drive | PMigrasikan fitur dan data yang masih diperlukan ke Humanis Insight baru, lalu nonaktifkan layanan PHP lama setelah penggantinya berjalan |
-| SENTRA | Website Tata Usaha baru yang sedang dibangun | Selesaikan alur surat keluar dan laporan TU terlebih dahulu, lalu lanjutkan surat masuk, disposisi, arsip, dan keuangan. |
+| Humanis Insight PHP lama | Indikator, laporan kinerja, monitoring, review, ekspor Excel, dan bukti melalui Google Drive | Migrasikan fitur dan data yang masih diperlukan ke Humanis Insight baru, lalu nonaktifkan layanan PHP lama setelah penggantinya berjalan |
+| SENTRA | Website Tata Usaha baru yang sedang dibangun | Pertahankan surat keluar dan laporan yang sudah ada; fokus pengembangan berikutnya pada keuangan siswa. Surat masuk, disposisi, dan arsip menyusul sesuai kebutuhan sekolah. |
 
 Humas, Sarpras, dan Tracer Study juga termasuk kebutuhan sekolah. Implementasi website bidangnya belum ditetapkan melalui inventaris ini. Data alumni yang ditemukan di Epoint belum dapat dianggap sebagai Tracer Study karena belum mencatat kondisi lulusan setelah sekolah secara lengkap.
 
@@ -38,9 +39,9 @@ SENTRA dipakai petugas TU untuk mengelola pekerjaan sehari-hari. Data surat, ars
 
 ### Surat dan arsip
 
-Pekerjaan pertama adalah surat keluar. Petugas dapat membuat draf, melihat detail, mengajukan surat, dan memeriksa riwayatnya. Surat yang diajukan diverifikasi oleh petugas yang berwenang. Orang yang membuat surat tidak dapat memverifikasi suratnya sendiri bila aturan pemisahan tugas tersebut disahkan sekolah.
+Alur awal surat keluar sudah sedang dibangun di SENTRA: petugas dapat membuat draf, melihat detail, mengajukan surat, dan memeriksa riwayatnya. Surat yang diajukan diverifikasi oleh petugas yang berwenang; aturan pemisahan tugas masih menunggu pengesahan sekolah.
 
-Surat masuk, disposisi, pencarian arsip digital, dan kebijakan penyimpanan dokumen dikerjakan setelah alur surat keluar dapat diuji. Format nomor surat, daftar penandatangan, dan masa simpan arsip masih perlu dikonfirmasi kepada sekolah.
+Surat masuk, disposisi, dan pencarian arsip digital tetap dalam backlog setelah fokus keuangan siswa dan integrasi laporan. Format nomor surat, daftar penandatangan, dan masa simpan arsip masih perlu dikonfirmasi kepada sekolah.
 
 ### Laporan TU dan review Kepala Sekolah
 
@@ -67,6 +68,7 @@ Rencana SSO memungkinkan pengguna membuka alamat website bidang secara langsung.
 Izin rinci untuk petugas TU, pemverifikasi, Kepala Sekolah, admin, dan peran lain dicatat dalam matriks RBAC. Akses untuk melihat laporan tidak otomatis memberi hak untuk menyetujui laporan atau memverifikasi pembayaran. Kebutuhan role siswa juga harus diputuskan per aplikasi sebelum aksesnya dibuka.
 
 ## Target pekerjaan terdekat
+Pengembangan lintas tim mengikuti P1 Humanis (IdP OIDC standar, RBAC server, snapshot laporan dan review), P2 Tracer Study (aplikasi bidang alumni), lalu P3 SENTRA (tagihan dan pembayaran terverifikasi). Irisan TU untuk menyiapkan pengiriman laporan tidak menggantikan urutan ini. Epoint, Eraport, Presta, Riasec, dan SPMB memerlukan audit login dan role masing-masing sebelum adapter login atau laporan dibuat.
 
 Tahap awal dinyatakan selesai ketika tim dapat menjalankan dan menguji alur berikut secara lokal dengan data sintetis:
 

@@ -48,3 +48,28 @@ test("gagal kirim keputusan mempertahankan status sinkronisasi", async () => {
   await flushOutbox(db, async () => { throw new Error("offline"); });
   assert.equal((await db.getReport(report.id))?.syncStatus, "FAILED");
 });
+
+test("outbox tidak mengirim versi yang sudah digantikan keputusan", async () => {
+  const db = new MemoryStore();
+  const report = await createReport(db, petugas);
+  await submitReport(db, petugas, report.id);
+  await applyDecision(db, { id: "decision-stale", reportId: report.id, version: 1, action: "revision", feedback: "Perbaiki laporan", actor: "kepala" });
+  let calls = 0;
+  await flushOutbox(db, async () => { calls++; });
+  assert.equal(calls, 0);
+  assert.equal((await db.getReport(report.id))?.status, "REVISION");
+  assert.equal((await db.getReport(report.id))?.syncStatus, "LOCAL");
+  assert.deepEqual(await db.pending(), []);
+});
+
+test("retry pengiriman gagal tetap memakai event sama lalu menandai SENT", async () => {
+  const db = new MemoryStore();
+  const report = await createReport(db, petugas);
+  await submitReport(db, petugas, report.id);
+  const id = (await db.pending())[0].id;
+  await flushOutbox(db, async () => { throw Error("offline"); });
+  assert.equal((await db.pending())[0].id, id);
+  await flushOutbox(db, async () => {});
+  assert.equal((await db.getReport(report.id))?.syncStatus, "SENT");
+  assert.deepEqual(await db.pending(), []);
+});

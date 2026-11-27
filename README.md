@@ -117,7 +117,9 @@ Akses aplikasi melalui:
 
 http://localhost:3100
 
-Halaman utama dapat dibuka tanpa login. Halaman surat dan laporan membutuhkan autentikasi OIDC yang sudah dikonfigurasi.
+Halaman utama SENTRA (`/`) dapat dibuka tanpa login. Halaman `/masuk` menampilkan kolom nama pengguna dan kata sandi yang dinonaktifkan serta tombol menuju `/api/auth/login` untuk memulai Authorization Code + PKCE. Halaman surat, laporan, dan keuangan mengarahkan pengguna yang belum masuk ke `/masuk` dengan tujuan kembali yang dibatasi ke path internal. Data dan kata sandi tidak dikirim dari halaman SENTRA ke Humanis.
+
+Referensi alur beranda dan login: [SRIKANDI](https://srikandi.arsip.go.id/beranda). Humanis Insight baru saat ini hanya menyediakan SSO internal dengan cookie aplikasinya sendiri, **bukan penyedia OIDC untuk SENTRA**. Tombol login SENTRA akan menampilkan 503 sampai `OIDC_ISSUER`, `OIDC_CLIENT_ID`, dan `SESSION_KEY` dikonfigurasi untuk IdP OIDC standar. Jangan mengarahkan `OIDC_ISSUER` ke halaman `/masuk` Humanis atau menyalin sesi/cookie Humanis antar aplikasi. Penyedia OIDC, domain, redirect URI, dan pemetaan role TU menunggu keputusan sekolah serta pengujian lintas aplikasi.
 
 ## Pengujian
 
