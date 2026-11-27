@@ -1,2 +1,21 @@
-import { NextRequest } from "next/server";import { store } from "@/lib/prisma-store";import { guard } from "@/lib/request";import { flushOutbox,DomainError } from "@/lib/workflow";
-export async function POST(req:NextRequest){return guard(req,async()=>{if(process.env.NODE_ENV==="production"||!process.env.LOCAL_ADAPTER_KEY)throw new DomainError(403,"Adapter lokal nonaktif");if(req.headers.get("x-local-adapter-key")!==process.env.LOCAL_ADAPTER_KEY)throw new DomainError(403,"Kunci adapter salah");await flushOutbox(store,async payload=>{const url=process.env.REPORT_ADAPTER_URL;if(!url)throw Error("URL adapter kosong");const u=new URL(url);if(!["localhost","127.0.0.1"].includes(u.hostname))throw Error("Adapter hanya loopback");const res=await fetch(u,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload),signal:AbortSignal.timeout(3000)});if(!res.ok)throw Error("Gagal kirim");});return {ok:true};});}
+import { NextRequest } from "next/server";
+import * as oidc from "openid-client";
+import { oidcConfig } from "@/lib/auth";
+import { store } from "@/lib/prisma-store";
+import { actor, guard } from "@/lib/request";
+import { deliverReport } from "@/lib/report-delivery";
+import { flushOutbox, DomainError } from "@/lib/workflow";
+
+export async function POST(req: NextRequest) {
+  return guard(req, async () => {
+    if (actor(req).role !== "tu_staff") throw new DomainError(403, "Akses ditolak");
+    const url = process.env.HUMANIS_REPORT_URL;
+    if (!url || !process.env.OIDC_CLIENT_SECRET) throw new DomainError(503, "Pengiriman laporan belum dikonfigurasi");
+    // IdP wajib menerbitkan token layanan dengan audience/scope yang disepakati bersama Humanis.
+    await flushOutbox(store, async (payload, eventId) => {
+      const tokens = await oidc.clientCredentialsGrant(await oidcConfig(), { scope: "reports:submit" });
+      await deliverReport(payload, eventId, { url, token: tokens.access_token });
+    });
+    return { ok: true };
+  });
+}

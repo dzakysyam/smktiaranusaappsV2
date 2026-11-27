@@ -7,7 +7,7 @@ export type LetterAudit = { letterId: string; action: string; actorId: string; c
 export type Summary = { verifiedLetters: number; submittedLetters: number };
 export type Report = { id: string; authorId: string; version: number; status: "DRAFT" | "SUBMITTED" | "REVISION" | "APPROVED"; syncStatus: "LOCAL" | "PENDING" | "SENT" | "FAILED"; summary: Summary; feedback?: string };
 export type Decision = { id: string; reportId: string; version: number; action: "approve" | "revision"; feedback: string; actor: string };
-export type Outbox = { id: string; reportId: string; version: number; action: string; payload: unknown; status: "PENDING" | "SENT" | "FAILED" };
+export type Outbox = { id: string; reportId: string; version: number; action: string; payload: unknown; status: "PENDING" | "SENT" | "FAILED" | "CANCELLED" };
 export interface Store {
   transaction<T>(fn: (db: Store) => Promise<T>): Promise<T>;
   saveLetter(x: Letter): Promise<void>; getLetter(id: string): Promise<Letter | null>; listLetters(): Promise<Letter[]>; audit(x: LetterAudit): Promise<void>; history(id: string): Promise<LetterAudit[]>;
@@ -25,7 +25,7 @@ export class MemoryStore implements Store {
   async saveReport(x: Report) { this.reports.set(x.id, { ...x }); } async getReport(id: string) { return this.reports.get(id) ?? null; } async listReports() { return [...this.reports.values()]; }
   async saveVersion(x: Report) { const a = this.reportVersions.get(x.id) ?? []; a.push({ ...x, summary: { ...x.summary } }); this.reportVersions.set(x.id,a); }
   async versions(id: string) { return this.reportVersions.get(id) ?? []; }
-  async saveOutbox(x: Outbox) { this.outbox.set(x.id, { ...x }); } async pending() { return [...this.outbox.values()].filter(x => x.status !== "SENT"); }
+  async saveOutbox(x: Outbox) { this.outbox.set(x.id, { ...x }); } async pending() { return [...this.outbox.values()].filter(x => x.status === "PENDING" || x.status === "FAILED"); }
   async hasDecision(id: string) { return this.decisions.get(id) ?? null; } async saveDecision(x: Decision) { this.decisions.set(x.id,x); }
 }
 export async function createLetter(db: Store, actor: Actor, input: {subject: string; recipient: string}) {
@@ -55,7 +55,16 @@ export async function applyDecision(db:Store,x:Decision) {
   const r=await t.getReport(x.reportId);if(!r)throw new DomainError(404,"not found");if(r.version!==x.version||r.status!=="SUBMITTED")conflict();if(x.action==="revision"&&!x.feedback.trim())throw new DomainError(400,"Feedback revisi wajib");
   await t.saveDecision(x);if(x.action==="revision"){r.status="REVISION";r.version++;r.feedback=x.feedback;r.syncStatus="LOCAL";}else{r.status="APPROVED";r.feedback=x.feedback;r.syncStatus="LOCAL";}await t.saveReport(r);await t.saveVersion(r);return r;});
 }
-export async function flushOutbox(db:Store,send:(payload:unknown)=>Promise<void>) {
- for(const e of await db.pending()) {const r=await db.getReport(e.reportId);if(!r||r.version!==e.version)continue;
- try{await send(e.payload);e.status="SENT";r.syncStatus="SENT";}catch{e.status="FAILED";r.syncStatus="FAILED";}await db.transaction(async t=>{await t.saveOutbox(e);await t.saveReport(r);});}
+export async function flushOutbox(db:Store,send:(payload:unknown, eventId:string)=>Promise<void>) {
+ for(const e of await db.pending()) {
+  await db.transaction(async t=>{
+   const r=await t.getReport(e.reportId);
+   if(!r||r.version!==e.version||r.status!=="SUBMITTED"){
+    e.status="CANCELLED";await t.saveOutbox(e);return;
+   }
+   try{await send(e.payload,e.id);e.status="SENT";r.syncStatus="SENT";}
+   catch{e.status="FAILED";r.syncStatus="FAILED";}
+   await t.saveOutbox(e);await t.saveReport(r);
+  });
+ }
 }

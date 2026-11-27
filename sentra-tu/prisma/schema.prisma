@@ -67,3 +67,41 @@ model AppliedDecision {
   actorId String
   createdAt DateTime @default(now())
 }
+
+// Referensi siswa adalah ID opaque dari sumber yang disahkan, bukan salinan biodata.
+model StudentCharge {
+  id String @id @default(uuid())
+  studentRef String
+  kind String
+  period String
+  amount Int
+  createdBy String
+  createdAt DateTime @default(now())
+  payments StudentPayment[]
+  @@unique([studentRef, kind, period])
+  @@index([studentRef])
+}
+model StudentPayment {
+  id String @id @default(uuid())
+  chargeId String
+  charge StudentCharge @relation(fields: [chargeId], references: [id])
+  amount Int
+  reference String @unique
+  recordedBy String
+  status String @default("PENDING")
+  verifiedBy String?
+  voidedBy String?
+  reason String?
+  replacesPaymentId String?
+  createdAt DateTime @default(now())
+  @@index([chargeId])
+  @@index([status])
+}
+model FinanceAudit {
+  id String @id @default(uuid())
+  targetId String
+  action String
+  actorId String
+  createdAt DateTime @default(now())
+  @@index([targetId, createdAt])
+}

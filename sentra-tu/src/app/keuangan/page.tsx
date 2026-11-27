@@ -1,0 +1,2 @@
+import { cookies } from "next/headers";import { redirect } from "next/navigation";import { parseSession } from "@/lib/auth";import { KeuanganPanel } from "@/app/keuangan-panel";
+export const dynamic="force-dynamic";export default async function Keuangan(){const a=parseSession((await cookies()).get("tu_session")?.value);if(!a)redirect("/masuk?returnTo=%2Fkeuangan");return <KeuanganPanel actor={a}/>;}
