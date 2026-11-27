@@ -1,0 +1,29 @@
+{
+  "name": "tracer-study",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Aplikasi operasional Tracer Study alumni SMK Tiara Nusa One",
+  "scripts": {
+    "dev": "next dev -p 3200",
+    "build": "next build",
+    "start": "next start -p 3200",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.6",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}
